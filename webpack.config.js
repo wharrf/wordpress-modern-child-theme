@@ -1,21 +1,46 @@
-//webpack.config.js
-const path = require('path');
+const path = require('path')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
-module.exports = function(env) {
-    return {
-        entry: "./src/js/app.js",
-        output: {
-            path: path.resolve(__dirname, 'dist'),
-            filename: "bundle.js",
-            publicPath: '/dist'
-        },
-        module: {
-            loaders: [
-                {test: /\.html$/, loader: 'raw-loader', exclude: /node_modules/},
-                {test: /\.css$/, loader: "style-loader!css-loader", exclude: /node_modules/},
-                {test: /\.scss$/, loader: "style-loader!css-loader!sass-loader", exclude: /node_modules/},
-                {test: /\.woff($|\?)|\.woff2($|\?)|\.ttf($|\?)|\.eot($|\?)|\.svg($|\?)/, loader: 'url-loader'}
-            ]
-        }
-    }
-};
+const isDevelopment = true // process.env.NODE_ENV === 'development'
+
+module.exports = {
+    mode: isDevelopment ? 'development' : 'production',
+    module: {
+        rules: [
+            {
+                test: /\.(t|j)sx?$/,
+                loader: 'babel-loader',
+                include : path.resolve(__dirname, 'src/js'),
+                exclude: /node_modules/
+            },
+            {
+                test: /\.s(a|c)ss$/i,
+                loader: [
+                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            modules: true,
+                            sourceMap: isDevelopment
+                        }
+                    },
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            sourceMap: isDevelopment
+                        }
+                    },
+                ]
+            }
+        ]
+    },
+    resolve: {
+        extensions: ['.js', '.jsx', ".ts", ".tsx", '.scss']
+    },
+    plugins: [
+        new MiniCssExtractPlugin({
+          filename: isDevelopment ? '[name].css' : '[name].[hash].css',
+          chunkFilename: isDevelopment ? '[id].css' : '[id].[hash].css'
+        })
+    ]
+}
