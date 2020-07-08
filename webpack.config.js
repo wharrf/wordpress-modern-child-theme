@@ -5,6 +5,7 @@ const isDevelopment = true // process.env.NODE_ENV === 'development'
 
 module.exports = {
     mode: isDevelopment ? 'development' : 'production',
+    entry: path.resolve(__dirname, 'src/js/index'),
     module: {
         rules: [
             {
@@ -20,8 +21,8 @@ module.exports = {
                     {
                         loader: 'css-loader',
                         options: {
-                            modules: true,
-                            sourceMap: isDevelopment
+                            modules: false,
+                            sourceMap: isDevelopment,
                         }
                     },
                     {
